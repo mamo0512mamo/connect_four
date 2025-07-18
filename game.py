@@ -51,6 +51,8 @@ class Game:
             # 自分が勝ったら自分も記憶
             #1手目を除く 
             #statelist[.......,c,p,c]が打ったあと
+            #selected_column_list[.......,c,p,c]が打った手
+            #remember(自分が打つ前、自分が打った手、その報酬、自分が打った後、勝負有無)
             if len(selected_column_list) > 1:
                 self.players[3 - current_player].remember(state_list[-3], selected_column_list[-2], reward_pastplayer, state_list[-1], done)
             if done:

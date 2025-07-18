@@ -169,7 +169,6 @@ class DQNPlayer(Player):
         
         next_q_values = self.maxq_from_nextqvalues(next_states) # Take max Q-value across actions
         target_q_values = rewards + (1 - dones) * self.gamma * next_q_values
-        past_selected_columns = torch.clamp(past_selected_columns, min=0, max=6)
         q_values = self.q_network(past_states).gather(1, past_selected_columns.unsqueeze(1)).squeeze(1)
         
         loss = nn.MSELoss()(q_values, target_q_values)

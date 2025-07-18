@@ -1,0 +1,6 @@
+target networkの更新頻度
+モデルの再検討
+Adam?
+学習率等
+先よみ＋Ai
+Replayのbatch個数と容量

@@ -1,0 +1,9 @@
+SCREEN_WIDTH = 700
+SCREEN_HEIGHT = 600
+FPS = 60
+
+DARK_GRAY = (30, 30, 30)  # 背景色
+LIGHT_GRAY = (212, 212, 212)  # 文字色
+DARK_RED = (170, 51, 51)  # 赤
+BLUE = (30, 144, 255)  # 青（プレイヤー1用）
+BLACK = (0, 0, 0)

@@ -68,7 +68,7 @@ class DQNPlayer(Player):
         self.hidden_size = 128
         self.learning_rate = 0.01#
         self.gamma = 0.80#
-        self.epsilon = 1
+        self.epsilon = 0.3
         self.epsilon_decay = 0.9998#
         self.batch_size = 64
         self.memory_size = 10000
@@ -126,14 +126,13 @@ class DQNPlayer(Player):
                     maxi = i    
             return maxi
     
-    def maxq_from_nextqvalues(self, next_states):
+    def maxq_of_target_network(self, states):
         list_max_v = []
-        for state in next_states:
-            state = state[0]
+        for state in states:
             valid = self.valid_moves(state)
             state_tensor = torch.FloatTensor(state)
             state_tensor = state_tensor.view(-1, 1, 6, 7)
-            q_values = self.q_network(state_tensor)
+            q_values = self.target_network(state_tensor)
             maxv = -10000000000000
             for i in range(7):
                 if i in valid:
@@ -161,13 +160,10 @@ class DQNPlayer(Player):
         past_states = torch.stack(past_states)
         past_states = past_states.float()
         past_states = past_states.view(-1, 1, 6, 7)
-        next_states = torch.stack(next_states)
-        next_states = next_states.float()
-        next_states = next_states.view(-1, 1, 6, 7)
         dones = torch.tensor(dones)
         dones = dones.float()
         
-        next_q_values = self.maxq_from_nextqvalues(next_states) # Take max Q-value across actions
+        next_q_values = self.maxq_of_target_network(next_states) # Take max Q-value across actions
         target_q_values = rewards + (1 - dones) * self.gamma * next_q_values
         q_values = self.q_network(past_states).gather(1, past_selected_columns.unsqueeze(1)).squeeze(1)
         
@@ -176,6 +172,7 @@ class DQNPlayer(Player):
         loss.backward()
         self.optimizer.step()
         self.update_target_network()
+        print(loss)
 
         self.epsilon *= self.epsilon_decay
         if self.epsilon < self.epsilon_min:

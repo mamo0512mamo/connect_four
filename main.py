@@ -31,7 +31,7 @@ def main():
 
     while True:
         game = Game(players)
-        game.init_display(screen, clock) #
+        #game.init_display(screen, clock) #
         winner = game.play()
         game_count += 1
         win_count[winner] += 1

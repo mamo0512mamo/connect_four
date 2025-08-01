@@ -42,10 +42,14 @@ class Game:
             reward_currentplayer = 0
             reward_pastplayer = 0
             done = False
+            loss1 = 0
+            loss2 = 0
+            if game_over:
+                done = True
             if winner == current_player:
                 reward_currentplayer = 1
                 reward_pastplayer = -1
-                done = True
+                
 
             # 自分が打って相手を記憶
             # 自分が勝ったら自分も記憶
@@ -58,17 +62,17 @@ class Game:
                 self.players[3 - current_player].remember(state_list[-3], selected_column_list[-2], reward_pastplayer, state_list[-1], done)
             if done:
                 self.players[current_player].remember(state_list[-2], selected_column_list[-1], reward_currentplayer, state_list[-1], True)###
-                self.players[current_player].replay()
-                self.players[3 - current_player].replay()
-            
+                loss1 = self.players[1].replay()
+                loss2 = self.players[2].replay()
+
+
             if self.do_display:
                 time.sleep(0.3)
-                
-            current_player = 3 - current_player
             
-            if game_over:
-                return winner
-
+            if done:
+                return winner, loss1, loss2
+            
+            current_player = 3 - current_player
 
     def display(self): #private
         if self.do_display:

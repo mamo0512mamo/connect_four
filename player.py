@@ -51,6 +51,7 @@ class ManualPlayer(Player):
             move = self.handle_human_player_input()
             if move in self.valid_moves(state):
                 return move
+            
     
 class RandomPlayer(Player):
     def choose_move(self, state):
@@ -68,7 +69,7 @@ class DQNPlayer(Player):
         self.hidden_size = 128
         self.learning_rate = 0.01#
         self.gamma = 0.80#
-        self.epsilon = 0.3
+        self.epsilon = 1
         self.epsilon_decay = 0.9998#
         self.batch_size = 64
         self.memory_size = 10000
@@ -154,7 +155,7 @@ class DQNPlayer(Player):
 
 
         past_states = [torch.tensor(state) for state in past_states]
-        next_states = [torch.tensor(state) for state in next_states]
+        next_states = [state for state in next_states]
         past_selected_columns = torch.tensor(past_selected_columns)
         rewards = torch.tensor(rewards)
         past_states = torch.stack(past_states)
@@ -172,11 +173,12 @@ class DQNPlayer(Player):
         loss.backward()
         self.optimizer.step()
         self.update_target_network()
-        print(loss)
+
 
         self.epsilon *= self.epsilon_decay
         if self.epsilon < self.epsilon_min:
             self.epsilon = self.epsilon_min
+        return loss.item()
         
     
     def save(self, filepath):
